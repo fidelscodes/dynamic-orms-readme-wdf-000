@@ -9,4 +9,13 @@ puts "song name: " + song.name
 puts "song album: " + song.album
 song.save
 
-DB[:conn].execute("SELECT * FROM songs")
+puts
+
+song2 = Song.new(name: "Gold Digger", album: "Late Registration")
+puts "song2 name: " + song2.name
+puts "song2 album: " + song2.album
+puts "But this song hasn't been saved so it won't show up when we request all songs from the database"
+
+puts
+
+p DB[:conn].execute("SELECT * FROM songs")

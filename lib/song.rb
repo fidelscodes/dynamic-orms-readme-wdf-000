@@ -3,14 +3,20 @@ require 'active_support/inflector'
 
 class Song
 
-
+  # Returns the name of a table, given the name of a class
+  # #pluralize is provided from active_support/inflector
   def self.table_name
     self.to_s.downcase.pluralize
   end
 
+
+  # Return value of this method will look something like this:
+  #=> ["id", "name", "album"]
+  # Which we use to create the attr_accessors of our class
   def self.column_names
     DB[:conn].results_as_hash = true
 
+    # Queries the table for the names of its columns
     sql = "pragma table_info('#{table_name}')"
 
     table_info = DB[:conn].execute(sql)
@@ -21,10 +27,16 @@ class Song
     column_names.compact
   end
 
+
+  # Metaprogramming our attr_accessors
+  # Allows us to avoid having to explicitly name reader/writer methods for each column name
   self.column_names.each do |col_name|
     attr_accessor col_name.to_sym
   end
 
+
+  # We expect .new to be called with a hash, so when referring to options, we
+  # expect to be operating on a hash
   def initialize(options={})
     options.each do |property, value|
       self.send("#{property}=", value)
@@ -59,6 +71,3 @@ class Song
   end
 
 end
-
-
-
